@@ -1,0 +1,17 @@
+---
+- name: Upgrade System (APT) Packages
+  hosts: sensehatpi
+  become: yes
+  tasks:
+    - name: Update Package List
+      apt:
+        update_cache: yes
+    - name: Upgrade Packages
+      apt:
+        upgrade: full
+    - name: Clean Package Cache
+      apt:
+        autoclean: yes
+    - name: Remove Unused Dependencies
+      apt:
+        autoclean: yes

@@ -1,0 +1,8 @@
+---
+- name: Reboot Raspberry Pi
+  hosts: sensehatpi
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Reboot
+      reboot:

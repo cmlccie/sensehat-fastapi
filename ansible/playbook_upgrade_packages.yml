@@ -3,7 +3,7 @@
   hosts: sensehatpi
   become: yes
   tasks:
-    - name: Update Package List
+    - name: Update Package Lists
       apt:
         update_cache: yes
     - name: Upgrade Packages

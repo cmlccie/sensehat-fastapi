@@ -19,3 +19,7 @@
       systemd:
         state: restarted
         name: avahi-daemon
+    - name: Ensure the en_US.UTF-8 Locale Exists
+      locale_gen:
+        name: en_US.UTF-8
+        state: present

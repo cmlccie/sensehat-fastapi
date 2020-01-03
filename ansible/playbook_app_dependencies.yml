@@ -1,0 +1,13 @@
+---
+- name: App Depencenies
+  hosts: sensehatpi
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Update APT Package Lists
+      apt:
+        update_cache: yes
+    - name: Python3-PIP (latest)
+      apt:
+        name: python3-pip
+        state: latest

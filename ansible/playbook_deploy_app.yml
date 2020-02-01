@@ -1,0 +1,50 @@
+---
+- name: Install system-level app dependencies
+  hosts: sensehatpi
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Update APT package lists and install APT system dependencies
+      apt:
+        update_cache: yes
+        name:
+          - python3-pip
+          - python3-venv
+          - sense-hat
+        state: latest
+
+
+- name: Deploy SenseAPI Python App
+  hosts: sensehatpi
+  gather_facts: no
+  tasks:
+    - name: Create the /srv/senseapi application directory
+      become: true
+      file:
+        path: /srv/senseapi
+        state: directory
+        owner: pi
+        group: pi
+        mode: '0755'
+
+    - name: Create the /srv/senseapi-venv virtual environment directory
+      become: true
+      file:
+        path: /srv/senseapi-venv
+        state: directory
+        owner: pi
+        group: pi
+        mode: '0755'
+
+    - name: Syncronize local /senseapi directory to remote /srv/senseapi
+      synchronize:
+        src: ../senseapi/
+        dest: /srv/senseapi/
+        delete: yes
+
+    - name: Install Python application dependencies
+      pip:
+        virtualenv_command: /usr/bin/python3 -m venv
+        virtualenv: /srv/senseapi-venv
+        requirements: /srv/senseapi/requirements.txt
+        virtualenv_site_packages: yes

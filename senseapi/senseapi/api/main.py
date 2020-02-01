@@ -6,11 +6,15 @@ from senseapi.api import v0
 
 
 # Initialize the top-level FastAPI application
-app = FastAPI(openapi_prefix="/api")
+app = FastAPI(
+    openapi_url="/api/openapi.json",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+)
 
 
 # Top-level API endpoints
-@app.get("/")
+@app.get("/api")
 def get_api_root_paths():
     """Return the API root paths; by version."""
     return {

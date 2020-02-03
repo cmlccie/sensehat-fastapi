@@ -9,6 +9,7 @@ ansible = "*"
 [packages]
 fastapi = "*"
 uvicorn = "*"
+sense-hat = "*"
 
 [requires]
 python_version = "3.7"

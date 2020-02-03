@@ -1,6 +1,9 @@
 """FastAPI application."""
 
+import time
+
 from fastapi import FastAPI
+from starlette.requests import Request
 
 from senseapi.api import v0
 
@@ -11,6 +14,16 @@ app = FastAPI(
     docs_url="/api/docs",
     redoc_url="/api/redoc",
 )
+
+
+# Application Middleware
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
 
 
 # Top-level API endpoints

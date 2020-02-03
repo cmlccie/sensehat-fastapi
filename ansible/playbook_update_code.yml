@@ -1,0 +1,10 @@
+---
+- name: Update Application Code
+  hosts: sensehatpi
+  gather_facts: no
+  tasks:
+    - name: Syncronize local /senseapi directory to remote /srv/senseapi
+      synchronize:
+        src: ../senseapi/
+        dest: /srv/senseapi/
+        delete: yes

@@ -5,42 +5,62 @@ from typing import List
 from fastapi import FastAPI
 from sense_hat import SenseHat
 
+from senseapi.domain.models.environment import (
+    HumidityReading, HumidityUnit, PressureReading, PressureUnit,
+    TemperatureReading, TemperatureUnit,
+)
+
 
 # Module Variables
 sense = SenseHat()
-api = FastAPI(openapi_prefix="/api/v0")
+api = FastAPI(openapi_prefix="/api/v1")
 
 
 # API Endpoints
-@api.get("/humidity", tags=["Environmental Sensors"])
-def get_humidity():
+@api.get(
+    "/humidity",
+    response_model=HumidityReading,
+    tags=["Environmental Sensors"],
+)
+def get_humidity() -> HumidityReading:
     """Get the percentage of relative humidity from the humidity sensor."""
-    return {
-        "units": "%",
-        "humidity_sensor": sense.get_humidity(),
-    }
+    return HumidityReading(
+        units=HumidityUnit.relative_humidity,
+        humidity_sensor=sense.get_humidity(),
+    )
 
 
-@api.get("/pressure", tags=["Environmental Sensors"])
-def get_pressure():
+@api.get(
+    "/pressure",
+    response_model=PressureReading,
+    tags=["Environmental Sensors"],
+)
+def get_pressure() -> PressureReading:
     """Get the current pressure in Millibars from the pressure sensor."""
-    return {
-        "units": "mbar",
-        "pressure_sensor": sense.get_pressure(),
-    }
+    return PressureReading(
+        units=PressureUnit.millibar,
+        pressure_sensor=sense.get_pressure(),
+    )
 
 
-@api.get("/temperature", tags=["Environmental Sensors"])
-def get_temperature():
+@api.get(
+    "/temperature",
+    response_model=TemperatureReading,
+    tags=["Environmental Sensors"],
+)
+def get_temperature() -> TemperatureReading:
     """Get the temperature in degrees Celsius from the Sense HAT sensors."""
-    return {
-        "units": "°C",
-        "humidity_sensor": sense.get_temperature_from_humidity(),
-        "pressure_sensor": sense.get_temperature_from_pressure(),
-    }
+    return TemperatureReading(
+        units=TemperatureUnit.celsius,
+        humidity_sensor=sense.get_temperature_from_humidity(),
+        pressure_sensor=sense.get_temperature_from_pressure(),
+    )
 
 
-@api.post("/message", tags=["LED Matrix"])
+@api.post(
+    "/message",
+    tags=["LED Matrix"],
+)
 def show_message(
     text_string: str,
     scroll_speed: float = 0.1,

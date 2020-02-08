@@ -5,7 +5,7 @@ import time
 from fastapi import FastAPI
 from starlette.requests import Request
 
-from senseapi.api import v0
+from senseapi.api import v0, v1
 
 
 # Initialize the top-level FastAPI application
@@ -31,9 +31,11 @@ async def add_process_time_header(request: Request, call_next):
 def get_api_root_paths():
     """Return the API root paths; by version."""
     return {
-        "v0": "/api/v0/"
+        "v0": "/api/v0/",
+        "v1": "/api/v1/",
     }
 
 
 # Mount the versioned sub-APIs
 app.mount("/api/v0", v0.api)
+app.mount("/api/v1", v1.api)

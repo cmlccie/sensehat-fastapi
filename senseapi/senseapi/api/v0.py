@@ -62,7 +62,8 @@ def get_pixels() -> List[List[int]]:
     \f
     Returns:
         List[List[int]]: A list containing 64 smaller lists of
-            [R, G, B] pixels (red, green, blue) representing the flipped image.
+            [R, G, B] pixel values (red, green, blue) representing the image on
+            the LED matrix image.
     """
     return sense.get_pixels()
 
@@ -181,7 +182,10 @@ class FlipDirection(str, Enum):
 
 
 @api.post("/led_matrix/flip", tags=["LED Matrix"])
-def flip(direction: FlipDirection, redraw: bool = True) -> List[List[int]]:
+def flip_image(
+    direction: FlipDirection,
+    redraw: bool = True,
+) -> List[List[int]]:
     """Flips the image on the LED matrix horizontally.
     \f
     Args:
@@ -200,7 +204,7 @@ def flip(direction: FlipDirection, redraw: bool = True) -> List[List[int]]:
 
 
 @api.post("/led_matrix/low_light", tags=["LED Matrix"])
-def set_low_light(on: bool = False):
+def set_low_light_mode(on: bool = False):
     """Enable or disable low-light mode.
 
     Low-light mode is useful if the Sense HAT is being used in a dark
@@ -213,7 +217,7 @@ def set_low_light(on: bool = False):
 
 
 @api.get("/led_matrix/low_light", tags=["LED Matrix"])
-def get_low_light() -> bool:
+def get_low_light_mode() -> bool:
     """Get the status of low-light mode.
     \f
     Returns:

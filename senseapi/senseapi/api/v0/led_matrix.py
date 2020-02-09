@@ -1,50 +1,20 @@
-"""Sense HAT FastAPI v0."""
+"""Sense HAT FastAPI v0 - LED Matrix Endpoints."""
 
+from enum import Enum
 from typing import List
 
-from fastapi import FastAPI
-from sense_hat import SenseHat
-from enum import Enum
+from fastapi import APIRouter
+
+from senseapi.infrastructure import SenseHat
 
 
 # Module Variables
+router = APIRouter()
 sense = SenseHat()
-api = FastAPI(openapi_prefix="/api/v0")
 
 
 # API Endpoints
-
-# Environment
-@api.get("/humidity", tags=["Environmental Sensors"])
-def get_humidity():
-    """Get the percentage of relative humidity from the humidity sensor."""
-    return {
-        "units": "%",
-        "humidity_sensor": sense.get_humidity(),
-    }
-
-
-@api.get("/pressure", tags=["Environmental Sensors"])
-def get_pressure():
-    """Get the current pressure in Millibars from the pressure sensor."""
-    return {
-        "units": "mbar",
-        "pressure_sensor": sense.get_pressure(),
-    }
-
-
-@api.get("/temperature", tags=["Environmental Sensors"])
-def get_temperature():
-    """Get the temperature in degrees Celsius from the Sense HAT sensors."""
-    return {
-        "units": "°C",
-        "humidity_sensor": sense.get_temperature_from_humidity(),
-        "pressure_sensor": sense.get_temperature_from_pressure(),
-    }
-
-
-# LED Matrix
-@api.post("/led_matrix", tags=["LED Matrix"])
+@router.post("/")
 def set_pixels(pixel_list: List[List[int]]):
     """Update the entire LED matrix with a list of 64 pixel values [R, G, B].
     \f
@@ -56,7 +26,7 @@ def set_pixels(pixel_list: List[List[int]]):
     sense.set_pixels(pixel_list)
 
 
-@api.get("/led_matrix", tags=["LED Matrix"])
+@router.get("/")
 def get_pixels() -> List[List[int]]:
     """Get the pixel values for the entire LED matrix.
     \f
@@ -68,7 +38,7 @@ def get_pixels() -> List[List[int]]:
     return sense.get_pixels()
 
 
-@api.delete("/led_matrix", tags=["LED Matrix"])
+@router.delete("/")
 def clear(color: str = "0,0,0"):
     """Set the entire LED matrix to a single color, defaults to black/off.
     \f
@@ -81,7 +51,7 @@ def clear(color: str = "0,0,0"):
     sense.clear(color)
 
 
-@api.post("/led_matrix/letter", tags=["LED Matrix"])
+@router.post("/letter")
 def show_letter(
     letter: str,
     text_color: str = "255,255,255",
@@ -107,7 +77,7 @@ def show_letter(
     )
 
 
-@api.post("/led_matrix/message", tags=["LED Matrix"])
+@router.post("/message")
 def show_message(
     text_string: str,
     scroll_speed: float = 0.1,
@@ -138,7 +108,7 @@ def show_message(
     )
 
 
-@api.post("/led_matrix/pixel", tags=["LED Matrix"])
+@router.post("/pixel")
 def set_pixel(x: int, y: int, color: str = "255,255,255"):
     """Set an individual LED matrix pixel the specified color.
     \f
@@ -152,7 +122,7 @@ def set_pixel(x: int, y: int, color: str = "255,255,255"):
     sense.set_pixel(x, y, color)
 
 
-@api.get("/led_matrix/pixel", tags=["LED Matrix"])
+@router.get("/pixel")
 def get_pixel(x: int, y: int) -> List[int]:
     """Get the pixel value for the specified x, y coordinate..
     \f
@@ -163,7 +133,7 @@ def get_pixel(x: int, y: int) -> List[int]:
     return sense.get_pixel(x, y)
 
 
-@api.post("/led_matrix/rotation", tags=["LED Matrix"])
+@router.post("/rotation")
 def set_rotation(r: int, redraw: bool = True):
     """Set the rotation of the image shown on the LED Matrix.
     \f
@@ -181,7 +151,7 @@ class FlipDirection(str, Enum):
     horizontal = "horizontal"
 
 
-@api.post("/led_matrix/flip", tags=["LED Matrix"])
+@router.post("/flip")
 def flip_image(
     direction: FlipDirection,
     redraw: bool = True,
@@ -203,7 +173,7 @@ def flip_image(
         return sense.flip_h(redraw=redraw)
 
 
-@api.post("/led_matrix/low_light", tags=["LED Matrix"])
+@router.post("/low_light")
 def set_low_light_mode(on: bool = False):
     """Enable or disable low-light mode.
 
@@ -216,7 +186,7 @@ def set_low_light_mode(on: bool = False):
     sense.low_light = on
 
 
-@api.get("/led_matrix/low_light", tags=["LED Matrix"])
+@router.get("/low_light")
 def get_low_light_mode() -> bool:
     """Get the status of low-light mode.
     \f
@@ -226,7 +196,7 @@ def get_low_light_mode() -> bool:
     return sense.low_light
 
 
-@api.post("/led_matrix/gamma", tags=["LED Matrix"])
+@router.post("/gamma")
 def set_gamma(lookup_table: List[int]):
     """Set the gamma lookup table.
 
@@ -246,7 +216,7 @@ def set_gamma(lookup_table: List[int]):
     sense.gamma = lookup_table
 
 
-@api.delete("/led_matrix/gamma", tags=["LED Matrix"])
+@router.delete("/gamma")
 def reset_gamma():
     """Reset the gamma lookup table."""
     sense.gamma_reset()
